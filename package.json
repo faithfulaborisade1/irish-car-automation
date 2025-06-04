@@ -1,29 +1,46 @@
 {
-  "name": "irish-car-automation",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "irish-car-automation": "file:",
-    "lucide-react": "^0.511.0",
-    "next": "15.3.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.2",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+    "name": "irish-car-automation",
+    "version": "1.0.0",
+    "description": "Modern car marketplace - Ireland's premier automotive platform",
+    "private": true,
+    "scripts": {
+        "dev": "turbo run dev",
+        "build": "turbo run build",
+        "lint": "turbo run lint",
+        "type-check": "turbo run type-check",
+        "clean": "turbo run clean",
+        "docker:up": "docker-compose up -d",
+        "docker:down": "docker-compose down",
+        "docker:logs": "docker-compose logs -f",
+        "db:migrate": "cd packages/database && npx prisma migrate dev",
+        "db:generate": "cd packages/database && npx prisma generate",
+        "db:studio": "cd packages/database && npx prisma studio"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "turbo": "^2.0.0",
+        "typescript": "^5.0.0"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": ">=8.0.0"
+    },
+    "packageManager": "pnpm@8.15.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/faithfulaborisade1/irish-car-automation"
+    },
+    "keywords": [
+        "car-marketplace",
+        "irish-cars",
+        "automotive",
+        "nextjs",
+        "react-native",
+        "monorepo"
+    ],
+    "author": "Faithful Aborisade",
+    "license": "MIT",
+    "dependencies": {
+        "irish-car-automation": "file:"
+    }
 }

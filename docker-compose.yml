@@ -1,0 +1,36 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: irish-car-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: irish_car_automation
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secure_password_123
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - irish-car-network
+
+  # Redis for Caching
+  redis:
+    image: redis:7-alpine
+    container_name: irish-car-redis
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - irish-car-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  irish-car-network:
+    driver: bridge

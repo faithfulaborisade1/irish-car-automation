@@ -5,6 +5,9 @@ import Image from 'next/image'
 import { Car, Users, Star, MapPin, Search } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import LikeButton from '@/components/LikeButton'
 
 export default function HomePage() {
   const router = useRouter()
@@ -64,54 +67,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-3">
-                <img 
-                  src="/images/logo.png" 
-                  alt="Irish Auto Market Logo" 
-                  className="h-10 w-10"
-                />
-                <div className="flex items-center space-x-2">
-                  <div className="text-xl font-bold text-gray-900">
-                    IRISH
-                  </div>
-                  <div className="text-xl font-bold text-secondary">
-                    AUTO MARKET
-                  </div>
-                </div>
-              </Link>
-            </div>
-
-            <nav className="hidden space-x-8 md:flex">
-              <Link href="/cars" className="font-medium text-gray-700 hover:text-primary">
-                BUY
-              </Link>
-              <Link href="/sell" className="font-medium text-gray-700 hover:text-primary">
-                SELL
-              </Link>
-              <Link href="/dealers" className="font-medium text-gray-700 hover:text-primary">
-                DEALERS
-              </Link>
-              <Link href="/about" className="font-medium text-gray-700 hover:text-primary">
-                ABOUT
-              </Link>
-            </nav>
-
-            <div className="flex items-center space-x-4">
-              <Link href="/auth/signin" className="font-medium text-gray-700 hover:text-primary">
-                LOGIN
-              </Link>
-              <Link href="/auth/signup" className="rounded bg-primary px-4 py-2 font-medium text-white hover:bg-primary/90">
-                REGISTER
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Shared Header */}
+      <Header currentPage="home" />
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-gray-900 to-gray-700 py-20">
@@ -275,10 +232,18 @@ export default function HomePage() {
                         Featured
                       </span>
                     </div>
-                    <div className="absolute top-4 right-4">
+                    <div className="absolute top-4 right-4 flex items-center space-x-2">
                       <span className="bg-white bg-opacity-90 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
                         €{car.price.toLocaleString()}
                       </span>
+                      <LikeButton 
+                        carId={car.id}
+                        initialLikesCount={car.likesCount || 0}
+                        initialIsLiked={car.isLiked || false}
+                        size="sm"
+                        showCount={false}
+                        className="bg-white bg-opacity-90 rounded-full"
+                      />
                     </div>
                   </div>
 
@@ -310,9 +275,17 @@ export default function HomePage() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">
-                        {car.seller.verified ? '✓ Verified' : ''} {car.seller.type}
-                      </span>
+                      <div className="flex items-center space-x-3">
+                        <span className="text-sm text-gray-600">
+                          {car.seller.verified ? '✓ Verified' : ''} {car.seller.type}
+                        </span>
+                        <LikeButton 
+                          carId={car.id}
+                          initialLikesCount={car.likesCount || 0}
+                          initialIsLiked={car.isLiked || false}
+                          size="sm"
+                        />
+                      </div>
                       <Link
                         href={`/cars/${car.id}`}
                         className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 transition-colors"
@@ -327,6 +300,9 @@ export default function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Shared Footer */}
+      <Footer />
     </div>
   )
 }

@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/database'
+import jwt from 'jsonwebtoken'
+
+// Get current user from JWT token
+async function getCurrentUser(request: NextRequest) {
+  try {
+    const token = request.cookies.get('auth-token')?.value
+    if (!token) return null
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string }
+    return decoded.userId
+  } catch (error) {
+    return null
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
+    const currentUserId = await getCurrentUser(request)
     const searchParams = request.nextUrl.searchParams
     const featured = searchParams.get('featured')
     const sortBy = searchParams.get('sort') || 'newest'
@@ -83,6 +98,9 @@ export async function GET(request: NextRequest) {
       case 'mileage-high':
         orderBy = { mileage: 'desc' }
         break
+      case 'most-liked':
+        orderBy = { likesCount: 'desc' }
+        break
       case 'newest':
       default:
         orderBy = { createdAt: 'desc' }
@@ -101,6 +119,17 @@ export async function GET(request: NextRequest) {
             dealerProfile: true,
           },
         },
+        // Include likes if user is authenticated
+        ...(currentUserId && {
+          likes: {
+            where: {
+              userId: currentUserId
+            },
+            select: {
+              id: true
+            }
+          }
+        })
       },
       orderBy,
       take: 50, // Limit results
@@ -124,6 +153,11 @@ export async function GET(request: NextRequest) {
       featured: car.featured,
       views: car.viewsCount,
       inquiries: car.inquiriesCount,
+      
+      // NEW: Like data
+      likesCount: car.likesCount,
+      isLiked: currentUserId ? car.likes.length > 0 : false,
+      
       images: car.images.map(img => ({
         id: img.id,
         url: img.largeUrl,

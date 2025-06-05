@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, Phone, Mail, MapPin, Calendar, Gauge, Fuel, Settings, Eye, MessageCircle } from 'lucide-react'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import LikeButton from '@/components/LikeButton'
 
 // Fetch single car from API
 async function getCar(id: string) {
@@ -34,67 +37,15 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="border-b bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-3">
-                <img 
-                  src="/images/logo.png" 
-                  alt="Irish Auto Market Logo" 
-                  className="h-10 w-10"
-                />
-                <div className="flex items-center space-x-2">
-                  <div className="text-xl font-bold text-gray-900">
-                    IRISH
-                  </div>
-                  <div className="text-xl font-bold text-secondary">
-                    AUTO MARKET
-                  </div>
-                </div>
-              </Link>
-            </div>
-
-            {/* Navigation */}
-            <nav className="hidden space-x-8 md:flex">
-              <Link href="/cars" className="font-medium text-gray-700 hover:text-primary">
-                BUY
-              </Link>
-              <Link href="/sell" className="font-medium text-gray-700 hover:text-primary">
-                SELL
-              </Link>
-              <Link href="/dealers" className="font-medium text-gray-700 hover:text-primary">
-                DEALERS
-              </Link>
-              <Link href="/about" className="font-medium text-gray-700 hover:text-primary">
-                ABOUT
-              </Link>
-            </nav>
-
-            {/* Auth Buttons */}
-            <div className="flex items-center space-x-4">
-              <Link 
-                href="/auth/signin" 
-                className="font-medium text-gray-700 hover:text-primary"
-              >
-                LOGIN
-              </Link>
-              <Link 
-                href="/auth/signup" 
-                className="rounded bg-primary px-4 py-2 font-medium text-white hover:bg-primary/90"
-              >
-                REGISTER
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Shared Header */}
+      <Header />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         {/* Back button */}
-        <Link href="/" className="inline-flex items-center text-primary hover:text-primary/80 mb-6">
+        <Link 
+          href="/" 
+          className="inline-flex items-center text-primary hover:text-primary/80 mb-6 transition-colors"
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to listings
         </Link>
@@ -200,12 +151,21 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
                 </div>
               </div>
 
-              <button className="w-full bg-primary text-white py-3 px-4 rounded-lg hover:bg-primary/90 font-medium mb-3">
+              <button className="w-full bg-primary text-white py-3 px-4 rounded-lg hover:bg-primary/90 font-medium mb-3 transition-colors">
                 Contact Seller
               </button>
-              <button className="w-full border border-primary text-primary py-3 px-4 rounded-lg hover:bg-primary/5 font-medium">
-                Save to Favorites
-              </button>
+              
+              <div className="flex space-x-3">
+                <button className="flex-1 border border-primary text-primary py-3 px-4 rounded-lg hover:bg-primary/5 font-medium transition-colors">
+                  Save to Favorites
+                </button>
+                <LikeButton 
+                  carId={car.id}
+                  size="lg"
+                  showCount={true}
+                  className="flex-shrink-0"
+                />
+              </div>
             </div>
 
             {/* Seller info */}
@@ -232,12 +192,12 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
               <div className="mt-6 space-y-2">
                 <a
                   href={`tel:${car.seller.phone}`}
-                  className="flex items-center justify-center w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                  className="flex items-center justify-center w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <Phone className="w-4 h-4 mr-2" />
                   Call Now
                 </a>
-                <button className="flex items-center justify-center w-full border border-blue-600 text-blue-600 py-2 px-4 rounded-lg hover:bg-blue-50">
+                <button className="flex items-center justify-center w-full border border-blue-600 text-blue-600 py-2 px-4 rounded-lg hover:bg-blue-50 transition-colors">
                   <Mail className="w-4 h-4 mr-2" />
                   Send Message
                 </button>
@@ -246,6 +206,9 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
           </div>
         </div>
       </div>
+
+      {/* Shared Footer */}
+      <Footer />
     </div>
   )
 }

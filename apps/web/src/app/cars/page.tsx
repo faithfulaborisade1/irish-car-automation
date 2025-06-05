@@ -2,9 +2,12 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, MapPin, Filter, Grid, List, SortAsc, ArrowLeft } from 'lucide-react'
+import { Search, MapPin, Filter, Grid, List, ArrowLeft } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import LikeButton from '@/components/LikeButton'
 
 interface Car {
   id: string
@@ -23,6 +26,8 @@ interface Car {
   featured: boolean
   views: number
   inquiries: number
+  likesCount: number
+  isLiked: boolean
   images: Array<{ id: string; url: string; alt: string }>
   seller: {
     name: string
@@ -92,61 +97,15 @@ export default function CarsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="border-b bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-3">
-                <img 
-                  src="/images/logo.png" 
-                  alt="Irish Auto Market Logo" 
-                  className="h-10 w-10"
-                />
-                <div className="flex items-center space-x-2">
-                  <div className="text-xl font-bold text-gray-900">
-                    IRISH
-                  </div>
-                  <div className="text-xl font-bold text-secondary">
-                    AUTO MARKET
-                  </div>
-                </div>
-              </Link>
-            </div>
-
-            <nav className="hidden space-x-8 md:flex">
-              <Link href="/cars" className="font-medium text-primary">
-                BUY
-              </Link>
-              <Link href="/sell" className="font-medium text-gray-700 hover:text-primary">
-                SELL
-              </Link>
-              <Link href="/dealers" className="font-medium text-gray-700 hover:text-primary">
-                DEALERS
-              </Link>
-              <Link href="/about" className="font-medium text-gray-700 hover:text-primary">
-                ABOUT
-              </Link>
-            </nav>
-
-            <div className="flex items-center space-x-4">
-              <Link href="/auth/signin" className="font-medium text-gray-700 hover:text-primary">
-                LOGIN
-              </Link>
-              <Link href="/auth/signup" className="rounded bg-primary px-4 py-2 font-medium text-white hover:bg-primary/90">
-                REGISTER
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Shared Header */}
+      <Header currentPage="cars" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Navigation */}
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="inline-flex items-center text-primary hover:text-primary/80 mb-4"
+            className="inline-flex items-center text-primary hover:text-primary/80 mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
@@ -165,7 +124,7 @@ export default function CarsPage() {
             
             <Link
               href="/"
-              className="flex items-center text-primary hover:text-primary/80"
+              className="flex items-center text-primary hover:text-primary/80 transition-colors"
             >
               <Search className="w-4 h-4 mr-2" />
               New Search
@@ -175,7 +134,7 @@ export default function CarsPage() {
           {/* Filters and Sort */}
           <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow">
             <div className="flex items-center space-x-4">
-              <button className="flex items-center text-gray-600 hover:text-primary">
+              <button className="flex items-center text-gray-600 hover:text-primary transition-colors">
                 <Filter className="w-4 h-4 mr-2" />
                 Filters
               </button>
@@ -183,26 +142,27 @@ export default function CarsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="border border-gray-300 rounded px-3 py-1 text-sm"
+                className="border border-gray-300 rounded px-3 py-1 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20"
               >
                 <option value="newest">Newest First</option>
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
                 <option value="year-new">Year: Newest</option>
                 <option value="mileage-low">Mileage: Lowest</option>
+                <option value="most-liked">Most Liked</option>
               </select>
             </div>
 
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded ${viewMode === 'grid' ? 'bg-primary text-white' : 'text-gray-600 hover:text-primary'}`}
+                className={`p-2 rounded transition-colors ${viewMode === 'grid' ? 'bg-primary text-white' : 'text-gray-600 hover:text-primary'}`}
               >
                 <Grid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded ${viewMode === 'list' ? 'bg-primary text-white' : 'text-gray-600 hover:text-primary'}`}
+                className={`p-2 rounded transition-colors ${viewMode === 'list' ? 'bg-primary text-white' : 'text-gray-600 hover:text-primary'}`}
               >
                 <List className="w-4 h-4" />
               </button>
@@ -236,10 +196,18 @@ export default function CarsPage() {
                       </span>
                     </div>
                   )}
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-4 right-4 flex items-center space-x-2">
                     <span className="bg-white bg-opacity-90 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
                       €{car.price.toLocaleString()}
                     </span>
+                    <LikeButton 
+                      carId={car.id}
+                      initialLikesCount={car.likesCount}
+                      initialIsLiked={car.isLiked}
+                      size="sm"
+                      showCount={false}
+                      className="bg-white bg-opacity-90 rounded-full"
+                    />
                   </div>
                 </div>
 
@@ -277,10 +245,16 @@ export default function CarsPage() {
                   </div>
 
                   <div className={`flex items-center justify-between ${viewMode === 'list' ? 'mt-4' : ''}`}>
-                    <div className="flex items-center">
+                    <div className="flex items-center space-x-3">
                       <span className="text-sm text-gray-600">
                         {car.seller.verified ? '✓ Verified' : ''} {car.seller.type}
                       </span>
+                      <LikeButton 
+                        carId={car.id}
+                        initialLikesCount={car.likesCount}
+                        initialIsLiked={car.isLiked}
+                        size="sm"
+                      />
                     </div>
                     <Link
                       href={`/cars/${car.id}`}
@@ -300,13 +274,16 @@ export default function CarsPage() {
             <p className="text-gray-600 mb-4">Try adjusting your search criteria or browse all cars.</p>
             <Link
               href="/cars"
-              className="inline-flex items-center rounded bg-primary px-4 py-2 text-white hover:bg-primary/90"
+              className="inline-flex items-center rounded bg-primary px-4 py-2 text-white hover:bg-primary/90 transition-colors"
             >
               Browse All Cars
             </Link>
           </div>
         )}
       </div>
+
+      {/* Shared Footer */}
+      <Footer />
     </div>
   )
 }

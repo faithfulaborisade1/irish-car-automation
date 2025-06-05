@@ -44,6 +44,10 @@ model User {
   sessions    Session[]
   accounts    Account[]
   
+  // NEW: Like System Relations
+  carLikes      CarLike[]
+  notifications Notification[]
+  
   @@map("users")
 }
 
@@ -121,6 +125,9 @@ model Car {
   viewsCount     Int @default(0)
   inquiriesCount Int @default(0)
   
+  // NEW: Like System
+  likesCount     Int @default(0)
+  
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -130,6 +137,11 @@ model Car {
   images      CarImage[]
   inquiries   CarInquiry[]
   favorites   FavoriteCar[]
+  
+  // NEW: Like System Relations
+  likes         CarLike[]
+  notifications Notification[]
+  priceHistory  PriceHistory[]
   
   @@map("cars")
 }
@@ -233,7 +245,53 @@ model DealerProfile {
   @@map("dealer_profiles")
 }
 
-// Enums
+// NEW: Car Like Model
+model CarLike {
+  id        String   @id @default(cuid())
+  userId    String
+  carId     String
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, carId])
+  @@map("car_likes")
+}
+
+// NEW: Notification Model
+model Notification {
+  id        String            @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  carId     String?
+  read      Boolean           @default(false)
+  actionUrl String?
+  metadata  Json?             // Extra data like old_price, new_price
+  createdAt DateTime          @default(now())
+  
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car       Car?              @relation(fields: [carId], references: [id], onDelete: Cascade)
+  
+  @@map("notifications")
+}
+
+// NEW: Price History Model
+model PriceHistory {
+  id        String   @id @default(cuid())
+  carId     String
+  oldPrice  Decimal  @db.Decimal(10, 2)
+  newPrice  Decimal  @db.Decimal(10, 2)
+  changedAt DateTime @default(now())
+  
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  
+  @@map("price_history")
+}
+
+// Existing Enums
 enum UserRole {
   USER
   DEALER
@@ -317,4 +375,13 @@ enum SubscriptionType {
   BASIC
   PREMIUM
   ENTERPRISE
+}
+
+// NEW: Notification Type Enum
+enum NotificationType {
+  CAR_LIKED
+  PRICE_DROP
+  CAR_SOLD
+  INQUIRY_RECEIVED
+  SYSTEM_UPDATE
 }

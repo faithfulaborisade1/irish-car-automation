@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import type { UserRole, FuelType, TransmissionType, BodyType, CarCondition, ListingStatus, SubscriptionType } from '@prisma/client'
+import type { UserRole, FuelType, TransmissionType, BodyType, CarCondition, ListingStatus, SubscriptionType, NotificationType } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -8,6 +8,9 @@ async function main() {
 
   // Clean existing data
   console.log('🧹 Cleaning existing data...')
+  await prisma.notification.deleteMany()
+  await prisma.carLike.deleteMany()
+  await prisma.priceHistory.deleteMany()
   await prisma.carInquiry.deleteMany()
   await prisma.favoriteCar.deleteMany()
   await prisma.savedSearch.deleteMany()
@@ -65,6 +68,30 @@ async function main() {
     },
   })
 
+  const user2 = await prisma.user.create({
+    data: {
+      email: 'sarah@email.com',
+      firstName: 'Sarah',
+      lastName: 'Murphy',
+      role: 'USER' as UserRole,
+      phone: '+353 86 987 6543',
+      location: { county: 'Dublin', city: 'Dublin 2' },
+    },
+  })
+
+  // Create test user with known credentials for testing
+  const testUser = await prisma.user.create({
+    data: {
+      email: 'test@irishautomarket.ie',
+      firstName: 'Test',
+      lastName: 'User',
+      role: 'USER' as UserRole,
+      phone: '+353 87 000 0000',
+      location: { county: 'Dublin', city: 'Dublin' },
+      password: '$2b$10$rV8O8m8l7n6jrYqL1VzKJ.oJ8L3m5n9p7q1s3t5u7v9w1x3y5z7A9B' // password123
+    },
+  })
+
   // Create dealer profiles
   console.log('🏢 Creating dealer profiles...')
   
@@ -94,7 +121,7 @@ async function main() {
     },
   })
 
-  // Create cars
+  // Create cars - JUST 3 CARS TO START
   console.log('🚗 Creating cars...')
   
   const car1 = await prisma.car.create({
@@ -130,6 +157,7 @@ async function main() {
       nctExpiry: new Date('2025-08-15'),
       viewsCount: 234,
       inquiriesCount: 12,
+      likesCount: 15,
     },
   })
 
@@ -166,6 +194,7 @@ async function main() {
       nctExpiry: new Date('2025-12-03'),
       viewsCount: 156,
       inquiriesCount: 8,
+      likesCount: 23,
     },
   })
 
@@ -201,6 +230,7 @@ async function main() {
       featured: true,
       viewsCount: 445,
       inquiriesCount: 23,
+      likesCount: 8,
     },
   })
 
@@ -243,12 +273,114 @@ async function main() {
     },
   })
 
+  // Create car likes - SIMPLE ONES ONLY
+  console.log('❤️ Creating car likes...')
+  
+  // user2 likes car1 (BMW)
+  await prisma.carLike.create({
+    data: {
+      userId: user2.id,
+      carId: car1.id,
+    },
+  })
+
+  // testUser likes car2 (Golf GTI)
+  await prisma.carLike.create({
+    data: {
+      userId: testUser.id,
+      carId: car2.id,
+    },
+  })
+
+  // user1 likes car2 (Golf GTI) 
+  await prisma.carLike.create({
+    data: {
+      userId: user1.id,
+      carId: car2.id,
+    },
+  })
+
+  // user2 likes car3 (Tesla)
+  await prisma.carLike.create({
+    data: {
+      userId: user2.id,
+      carId: car3.id,
+    },
+  })
+
+  // Create sample notifications
+  console.log('🔔 Creating notifications...')
+  
+  // Notification for dealer1 when someone liked their BMW
+  await prisma.notification.create({
+    data: {
+      userId: dealer1.id,
+      type: 'CAR_LIKED' as NotificationType,
+      title: 'Someone liked your car!',
+      message: `${user2.firstName} ${user2.lastName} liked your BMW 3 Series`,
+      carId: car1.id,
+      actionUrl: `/cars/${car1.id}`,
+      metadata: {
+        likerName: `${user2.firstName} ${user2.lastName}`,
+        likerEmail: user2.email
+      },
+      read: false,
+    },
+  })
+
+  // Notification for dealer2 when someone liked their Golf GTI
+  await prisma.notification.create({
+    data: {
+      userId: dealer2.id,
+      type: 'CAR_LIKED' as NotificationType,
+      title: 'Someone liked your car!',
+      message: `${testUser.firstName} ${testUser.lastName} liked your Volkswagen Golf`,
+      carId: car2.id,
+      actionUrl: `/cars/${car2.id}`,
+      metadata: {
+        likerName: `${testUser.firstName} ${testUser.lastName}`,
+        likerEmail: testUser.email
+      },
+      read: false,
+    },
+  })
+
+  // Create sample price history
+  console.log('📈 Creating price history...')
+  
+  // BMW had a price drop
+  await prisma.priceHistory.create({
+    data: {
+      carId: car1.id,
+      oldPrice: 35000,
+      newPrice: 32000,
+      changedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+    },
+  })
+
+  // Tesla had a price increase
+  await prisma.priceHistory.create({
+    data: {
+      carId: car3.id,
+      oldPrice: 42000,
+      newPrice: 45000,
+      changedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+    },
+  })
+
   console.log('✅ Seeding completed!')
   console.log(`Created:`)
-  console.log(`- 4 users (1 admin, 2 dealers, 1 regular user)`)
+  console.log(`- 6 users (1 admin, 2 dealers, 3 regular users including test user)`)
   console.log(`- 2 dealer profiles`)
-  console.log(`- 3 cars`)
+  console.log(`- 3 cars with like counts`)
   console.log(`- 3 car images`)
+  console.log(`- 4 car likes`)
+  console.log(`- 2 notifications`)
+  console.log(`- 2 price history records`)
+  console.log(``)
+  console.log(`🧪 Test Credentials:`)
+  console.log(`Email: test@irishautomarket.ie`)
+  console.log(`Password: password123`)
 }
 
 main()

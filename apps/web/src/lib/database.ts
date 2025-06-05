@@ -17,4 +17,10 @@ export type {
   InquiryType,
   InquiryStatus,
   SubscriptionType,
+  
+  // NEW: Like System Types
+  CarLike,
+  Notification,
+  PriceHistory,
+  NotificationType,
 } from '@prisma/client'

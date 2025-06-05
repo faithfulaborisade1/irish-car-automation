@@ -1,27 +1,42 @@
 {
-    "$schema": "https://turbo.build/schema.json",
-    "ui": "tui",
-    "tasks": {
-      "build": {
-        "dependsOn": ["^build"],
-        "outputs": [".next/**", "!.next/cache/**", "dist/**"]
-      },
-      "dev": {
-        "cache": false,
-        "persistent": true
-      },
-      "lint": {
-        "dependsOn": ["^build"]
-      },
-      "type-check": {
-        "dependsOn": ["^build"]
-      },
-      "clean": {
-        "cache": false
-      }
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "db:generate"],
+      "outputs": [
+        "apps/web/.next/**",
+        "!.next/cache/**",
+        "packages/*/dist/**"
+      ]
     },
-    "globalDependencies": [
-      "**/.env.*local",
-      "**/.env"
-    ]
-  }
+    "dev": {
+      "dependsOn": ["db:generate"],
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "type-check": {
+      "dependsOn": ["^build", "db:generate"]
+    },
+    "clean": {
+      "cache": false
+    },
+    "db:generate": {
+      "cache": false,
+      "outputs": ["packages/database/node_modules/.prisma/**"]
+    },
+    "db:migrate": {
+      "dependsOn": ["db:generate"],
+      "cache": false
+    }
+  },
+  "globalDependencies": [
+    "**/.env",
+    "**/.env.*local",
+    "apps/web/next.config.js",
+    "packages/database/prisma/schema.prisma"
+  ]
+}

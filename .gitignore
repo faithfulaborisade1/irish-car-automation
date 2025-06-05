@@ -1,8 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
-/.pnp
+# Dependencies
+node_modules/
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,32 +10,172 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
+# Monorepo node_modules (all possible locations)
+**/node_modules/
+apps/*/node_modules/
+packages/*/node_modules/
 
-# next.js
-/.next/
-/out/
+# Testing
+coverage/
+*.lcov
+.nyc_output
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
 
-# production
-/build
+# Next.js
+.next/
+out/
+apps/*/.next/
+apps/*/out/
+next-env.d.ts
+*.tsbuildinfo
 
-# misc
-.DS_Store
+# Production builds
+build/
+dist/
+apps/*/build/
+apps/*/dist/
+packages/*/build/
+packages/*/dist/
+
+# Turbo
+.turbo/
+
+# CRITICAL: Environment files (NEVER commit these!)
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+apps/*/.env*
+packages/*/.env*
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+prisma/migrations/**/migration.sql
+packages/database/prisma/migrations/**/migration.sql
+
+# Docker & Infrastructure
+docker-compose.override.yml
+.dockerignore
+
+# SSL Certificates (SECURITY CRITICAL)
+nginx/ssl/
+ssl/
+certificates/
+*.crt
+*.key
 *.pem
+*.p12
+*.pfx
 
-# debug
+# Logs (may contain sensitive info)
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
 
-# vercel
+# Dependency directories
+jspm_packages/
+web_modules/
+
+# Caches
+.cache/
+.webpack_cache/
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.parcel-cache/
+
+# Optional files
+.npm
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# Platform-specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Hosting platforms
 .vercel
+.netlify
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# SECURITY: Backup files (may contain sensitive data)
+backups/
+*.backup
+*.bak
+*.sql.gz
+*.dump
+
+# SECURITY: Upload directories (user-generated content)
+uploads/
+public/uploads/
+apps/web/public/uploads/
+
+# SECURITY: Session stores and secrets
+sessions/
+secrets/
+.secrets/
+*.secrets
+jwt/
+*.jwt
+
+# Monitoring and analytics
+.sentryclirc
+
+# Infrastructure as Code
+*.tfstate
+*.tfstate.*
+.terraform/
+*.kubeconfig
+
+# Process managers
+.pm2/
+
+# Generated files
+generated/
+.generated/
+
+# Local development
+.local/
+local/
+tmp/
+temp/
+.tmp/
+
+# Storybook
+.out
+.storybook-out
+storybook-static

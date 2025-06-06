@@ -29,7 +29,7 @@ playwright/.cache/
 out/
 apps/*/.next/
 apps/*/out/
-next-env.d.ts
+# next-env.d.ts (needed for Vercel detection)
 *.tsbuildinfo
 
 # Production builds

@@ -1,46 +1,46 @@
 {
-    "name": "irish-car-automation",
-    "version": "1.0.0",
-    "description": "Modern car marketplace - Ireland's premier automotive platform",
-    "private": true,
-    "scripts": {
-        "dev": "turbo run dev",
-        "build": "turbo run build",
-        "lint": "turbo run lint",
-        "type-check": "turbo run type-check",
-        "clean": "turbo run clean",
-        "docker:up": "docker-compose up -d",
-        "docker:down": "docker-compose down",
-        "docker:logs": "docker-compose logs -f",
-        "db:migrate": "cd packages/database && npx prisma migrate dev",
-        "db:generate": "cd packages/database && npx prisma generate",
-        "db:studio": "cd packages/database && npx prisma studio"
-    },
-    "devDependencies": {
-        "@types/node": "^20.0.0",
-        "turbo": "^2.0.0",
-        "typescript": "^5.0.0"
-    },
-    "engines": {
-        "node": ">=18.0.0",
-        "pnpm": ">=8.0.0"
-    },
-    "packageManager": "pnpm@8.15.0",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/faithfulaborisade1/irish-car-automation"
-    },
-    "keywords": [
-        "car-marketplace",
-        "irish-cars",
-        "automotive",
-        "nextjs",
-        "react-native",
-        "monorepo"
-    ],
-    "author": "Faithful Aborisade",
-    "license": "MIT",
-    "dependencies": {
-        "irish-car-automation": "file:"
-    }
+    "name":  "irish-car-automation",
+    "version":  "1.0.0",
+    "description":  "Modern car marketplace - Ireland\u0027s premier automotive platform",
+    "private":  true,
+    "scripts":  {
+                    "dev":  "turbo run dev",
+                    "build":  "turbo run build",
+                    "lint":  "turbo run lint",
+                    "type-check":  "turbo run type-check",
+                    "clean":  "turbo run clean",
+                    "docker:up":  "docker-compose up -d",
+                    "docker:down":  "docker-compose down",
+                    "docker:logs":  "docker-compose logs -f",
+                    "db:migrate":  "cd packages/database \u0026\u0026 npx prisma migrate dev",
+                    "db:generate":  "cd packages/database \u0026\u0026 npx prisma generate",
+                    "db:studio":  "cd packages/database \u0026\u0026 npx prisma studio"
+                },
+    "devDependencies":  {
+                            "@types/node":  "^20.0.0",
+                            "turbo":  "^2.0.0",
+                            "typescript":  "^5.0.0"
+                        },
+    "engines":  {
+                    "node":  "\u003e=18.0.0",
+                    "pnpm":  "\u003e=8.0.0"
+                },
+    "packageManager":  "pnpm@8.15.0",
+    "repository":  {
+                       "type":  "git",
+                       "url":  "https://github.com/faithfulaborisade1/irish-car-automation"
+                   },
+    "keywords":  [
+                     "car-marketplace",
+                     "irish-cars",
+                     "automotive",
+                     "nextjs",
+                     "react-native",
+                     "monorepo"
+                 ],
+    "author":  "Faithful Aborisade",
+    "license":  "MIT",
+    "dependencies":  {
+                         "irish-car-automation":  "file:"
+                     }
 }

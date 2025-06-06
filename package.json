@@ -41,6 +41,7 @@
     "author":  "Faithful Aborisade",
     "license":  "MIT",
     "dependencies":  {
+                         "next":  "^14.2.0",
                          "irish-car-automation":  "file:"
                      }
 }
